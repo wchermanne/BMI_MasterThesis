@@ -1,4 +1,4 @@
-function [C3,C4,Cz] = eeg_generator(Fs,t_end,SNR,movement, time_movement,eye_blink,power_line_check)
+function [C3,C4,Cz,time] = eeg_generator(Fs,t_end,SNR,movement, time_movement,eye_blink,power_line_check)
 %%% Signal generation for test (continuous sensorimotor rythm ) using 1st Order MPA
 %%% LEFT = 2
 %%% RIGHT =1
@@ -181,36 +181,36 @@ Y = awgn(sin_mat_C3,SNR,'measured');
 C3= Y;
 C4 = awgn(sin_mat_C4,SNR,'measured');
 Cz = awgn(sin_mat_Cz,SNR,'measured');
-% figure;
-% subplot(2,1,1)
-% plot(t,Y)
-% 
-% dft_size = 512;
-% fourier_sig = fftshift(fft(Y,dft_size));
-% k = 0:1:dft_size-1;
-% f_axis = Fs*k/dft_size -Fs/2;
-% fourier_sig = mag2db(abs(fourier_sig));
-% subplot(2,1,2)
-% plot(f_axis,fourier_sig);
-% xlabel('frequency [Hz]');
-% ylabel('Magnitude [dB]');
-% grid on
-% 
+time = t;
+figure;
+subplot(2,1,1)
+plot(t,Y)
+
+dft_size = 512;
+fourier_sig = fftshift(fft(Y,dft_size));
+k = 0:1:dft_size-1;
+f_axis = Fs*k/dft_size -Fs/2;
+fourier_sig = mag2db(abs(fourier_sig));
+subplot(2,1,2)
+plot(f_axis,fourier_sig);
+xlabel('frequency [Hz]');
+ylabel('Magnitude [dB]');
+grid on
+
 % nyq_freq = Fs./2; %% Half the sampling rate; nyquist frequency
 % wlen = 2*Fs;
 % hop = Fs;
 % [stft_tot, freq_vec, time_vec] = stft(Y, wlen, hop, dft_size, Fs);
 % figure;
 % surf(time_vec,freq_vec',mag2db(abs(stft_tot)));
-% 
-% figure;
-% spectrogram(C3,512,256,dft_size,Fs,'psd');
-% title('C3 STFT');
-% 
-% figure;
-% spectrogram(C4,512,256,dft_size,Fs,'psd');
-% title('C4 STFT')
 
 
+figure;
+spectrogram(C3,512,256,dft_size,Fs,'psd');
+title('C3 STFT');
+
+figure;
+spectrogram(C4,512,256,dft_size,Fs,'psd');
+title('C4 STFT')
 end
 

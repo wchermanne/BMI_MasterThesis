@@ -96,19 +96,10 @@ time_start = str2double(get(handles.move_time_edit,'String'));
 eye_blink_check = get(handles.eye_blink_check,'Value');
 emg_check = get(handles.emg_effects_check,'Value');
 power_line = get(handles.power_check,'Value');
-movement = get(handles.popupmenu,'Value');
-[C3,C4,Cz] = eeg_generator(Fs,duration,SNR,movement, time_start,eye_blink_check,power_line);
-save('channels.mat','C3','C4','Cz')
+movement = get(handles.popupmenu,'Value')
+[C3,C4,Cz,time] = eeg_generator(Fs,duration,SNR,movement, time_start,eye_blink_check,power_line);
+save('EEG_Signals','time','C3','C4','Cz','Fs')
 
-parameters=[];
-parameters.duration=duration;
-parameters.fsample=Fs;
-parameters.timestart=time_start;
-paremeters.movement=movement;
-paremeters.eye_blink_check=eye_blink_check;
-paremeters.emg_check=emg_check;
-paremeters.power_line=power_line;
-save('parameters.mat', 'parameters')
 
 
 
