@@ -1,0 +1,36 @@
+function [C3,C4,Cz] = eeg_generator(Fs,t_end,SNR,movement, time_movement)
+% This EEG signal generator is based on Markov process amplitude (1st
+% order) and adaptive part for synchronization and desynchrnoization 
+freq = linspace(0,39,40);
+freq = [freq 50]';
+amp = [0.5 2 7 4 2.5 0.3 0.15 0.3 3 5 6 8 5 4 2 1.5 1.2 1 0.9 0.6 0.4 0.2 0.1 0.1 0.05 0.03 0.02 0.01 0.008 0.004 0.002 0.001 0.0008 0.0005 0.0003 0.0001 0.00008 0.00005 0.00003 0.00001 20];
+phi = pi/2;
+t = 0:1/Fs:t_end;
+sin_mat = zeros(1,length(t));
+if(time_movement >= t_end)
+    error('Time movement is larger than ending time');
+end 
+desync_duration = 0.18 + 0.12*rand;
+sync_duration = 0.25 + 0.1*rand;
+
+for l = 1:1:length(t)
+    if (t(l) >= time_movement && t(l) <= time_movement+desync_duration)
+       amp(8:13) = 0.95.*amp(8:13);
+    end
+    if (t(l) >= time_movement+desync_duration && t(l) <= time_movement+desync_duration + desync_duration)
+        amp(8:13) = 1.*amp(8:13)./0.95;
+    end
+    sin_mat_temp = 0;
+    for k = 1:1:length(freq)
+        sin_mat_temp = sin_mat_temp + amp(k)*sin(2*pi*freq(k)*t(l)+phi);
+    end
+    sin_mat(l) = sin_mat_temp;
+    gamma = 0.995 + 0.01*rand;
+    amp = gamma*amp; %+ 0.1*rand(1,length(amp)) -0.05;
+    amp(end-1:end) = [20 20];
+end
+
+%%% Add noise contribution 
+C3 = awgn(sin_mat,SNR,'measured');
+end
+
