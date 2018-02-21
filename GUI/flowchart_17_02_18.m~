@@ -1,122 +1,138 @@
-%% Loading data 
-%load('EEG_Signals.mat')
-nyq_freq = Fs/2;
-Y = C3;
-t = time;
-figure;
-subplot(3,1,1)
-plot(time,C3)
-subplot(3,1,2)
-plot(time,Cz)
-subplot(3,1,3)
-plot(time,C4)
-
-%% Frequency Filtering & suuband creation for
-%%% One might use bandpass filtering from 3Hz (larger than EOG and eye blink artifacts)
-%%% up to 30-40 Hz (lower than power line interference @50 Hz)
-filter_order = 96;
-
-%%% 1ST : FIR Filter for mu rhythm --> pay attention to the delay = N/2
-low_cutoff = 7; % 3 Hz
-high_cutoff = 14; % 35Hz
-b_fir_mu = fir1(filter_order,[low_cutoff./nyq_freq,high_cutoff./nyq_freq]);% Hamming Window-based FIR filter design (from 0->1 with 1 correpons to nyquist frequency)
-%figure;
-%freqz(b_fir_mu,1,512);
-
-%%% 2ND : FIR Filter for beta rhythm --> pay attention to the delay = N/2
-low_cutoff = 15; % 3 Hz
-high_cutoff = 26; % 35Hz
-b_fir_beta = fir1(filter_order,[low_cutoff./nyq_freq,high_cutoff./nyq_freq]);% Hamming Window-based FIR filter design (from 0->1 with 1 correpons to nyquist frequency)
-%figure
-%freqz(b_fir_beta,1,512);
-
-%%% 3RD : FIR Filter for gamma rhythm --> pay attention to the delay = N/2
-low_cutoff = 35; % 3 Hz
-high_cutoff = 45; % 35Hz
-b_fir_gamma = fir1(filter_order,[low_cutoff./nyq_freq,high_cutoff./nyq_freq]);% Hamming Window-based FIR filter design (from 0->1 with 1 correpons to nyquist frequency)
-%figure
-%freqz(b_fir_gamma,1,512);
-
-%%% ALT FILTER : FIR Filter for gamma rhythm --> pay attention to the delay = N/2
-low_cutoff = 7; % 3 Hz
-high_cutoff = 35; % 35Hz
-b_fir = fir1(filter_order,[low_cutoff./nyq_freq,high_cutoff./nyq_freq]);% Hamming Window-based FIR filter design (from 0->1 with 1 correpons to nyquist frequency)
-%figure
-%freqz(b_fir,1,512);
-
-% C3_filtered = filter(b_fir,1,C3);
-% C4_filtered = filter(b_fir,1,C4);
-% Cz_filtered = filter(b_fir,1,Cz);
-% 
-% figure;
-% subplot(3,1,1)
-% plot(time,C3_filtered)
-% subplot(3,1,2)
-% plot(time,Cz_filtered)
-% subplot(3,1,3)
-% plot(time,C4_filtered)
-
-%% Spatial Filtering 
-
-%%% 1ST : COMMON AVERAGE REFERENCE %%%%
-
-C3_prime = C3- (1/2)*(C4+Cz) ;
-C4_prime = C4- (1/2)*(C3+Cz) ;
-Cz_prime = Cz- (1/2)*(C4+C3) ;
-
-%%% 2ND : LAPLACIAN FILTER %%%
-d_C3 = [4 8]; %% Cz followed by C3, distance in cm 
-w_hi = (1./d_C3)./(sum(1./d_C3));
-C3_lap = C3 - w_hi(1).*Cz - w_hi(2).*C4; 
-
-%% Temporal Filtering 
-
-C3_filtered = filter(b_fir_mu,1,C3_prime); % C3_prime but let's modify it 
-C4_filtered = filter(b_fir_mu,1,C4_prime);
-Cz_filtered = filter(b_fir_mu,1,Cz_prime);
-
-figure 
-subplot(3,1,1);
-plot(time,C3_filtered);
-title(' C3 After CAR & BDP');
-subplot(3,1,2);
-plot(time,Cz_filtered);
-title(' Cz After CAR & BDP');
-subplot(3,1,3);
-plot(time,C4_filtered);
-title(' C4 After CAR & BDP');
-
-%% CSP (Back to spatial filtering)
-
-%%% 3RD : Common spetcral patteren %%%. Notice that this is an adaptive
-%%% technique 
-% Notice that we assume that X = [C3 Cz C4] (from left to right)
-
-R_ave_right = zeros(3,3);
-for i = 1:1:10
-    load(['/Users/matthieu/GitHub/MasterThesis_BCI/GUI/Data_for_CSP/EEG_Signals_Right_Trial_' num2str(i) '.mat']);
-    R_normalized_current = spatial_cov_computation(Fs,C3,C4,Cz,time);
-    R_ave_right = R_ave_right + R_normalized_current;
+feature_mat = ones(12,4);
+load('LDA_2.mat')
+for i = 11:1:12
+    %% Loading data
+    load(['/Users/matthieu/GitHub/BMI_MasterThesis/GUI/Data_for_CSP/EEG_Signals_Right_Trial_' num2str(i) '.mat']);
+    nyq_freq = Fs/2;
+    Y = C3;
+    t = time;
+    figure;
+    subplot(3,1,1)
+    plot(time,C3)
+    subplot(3,1,2)
+    plot(time,Cz)
+    subplot(3,1,3)
+    plot(time,C4)
+    
+    %% Frequency Filtering & suuband creation for
+    %%% One might use bandpass filtering from 3Hz (larger than EOG and eye blink artifacts)
+    %%% up to 30-40 Hz (lower than power line interference @50 Hz)
+    filter_order = 96;
+    
+    %%% 1ST : FIR Filter for mu rhythm --> pay attention to the delay = N/2
+    low_cutoff = 7; % 3 Hz
+    high_cutoff = 14; % 35Hz
+    b_fir_mu = fir1(filter_order,[low_cutoff./nyq_freq,high_cutoff./nyq_freq]);% Hamming Window-based FIR filter design (from 0->1 with 1 correpons to nyquist frequency)
+    %figure;
+    %freqz(b_fir_mu,1,512);
+    
+    %%% 2ND : FIR Filter for beta rhythm --> pay attention to the delay = N/2
+    low_cutoff = 15; % 3 Hz
+    high_cutoff = 26; % 35Hz
+    b_fir_beta = fir1(filter_order,[low_cutoff./nyq_freq,high_cutoff./nyq_freq]);% Hamming Window-based FIR filter design (from 0->1 with 1 correpons to nyquist frequency)
+    %figure
+    %freqz(b_fir_beta,1,512);
+    
+    %%% 3RD : FIR Filter for gamma rhythm --> pay attention to the delay = N/2
+    low_cutoff = 35; % 3 Hz
+    high_cutoff = 45; % 35Hz
+    b_fir_gamma = fir1(filter_order,[low_cutoff./nyq_freq,high_cutoff./nyq_freq]);% Hamming Window-based FIR filter design (from 0->1 with 1 correpons to nyquist frequency)
+    %figure
+    %freqz(b_fir_gamma,1,512);
+    
+    %%% ALT FILTER : FIR Filter for gamma rhythm --> pay attention to the delay = N/2
+    low_cutoff = 7; % 3 Hz
+    high_cutoff = 35; % 35Hz
+    b_fir = fir1(filter_order,[low_cutoff./nyq_freq,high_cutoff./nyq_freq]);% Hamming Window-based FIR filter design (from 0->1 with 1 correpons to nyquist frequency)
+    %figure
+    %freqz(b_fir,1,512);
+    
+    % C3_filtered = filter(b_fir,1,C3);
+    % C4_filtered = filter(b_fir,1,C4);
+    % Cz_filtered = filter(b_fir,1,Cz);
+    %
+    % figure;
+    % subplot(3,1,1)
+    % plot(time,C3_filtered)
+    % subplot(3,1,2)
+    % plot(time,Cz_filtered)
+    % subplot(3,1,3)
+    % plot(time,C4_filtered)
+    
+    %% Spatial Filtering
+    
+    %%% 1ST : COMMON AVERAGE REFERENCE %%%%
+    
+    C3_prime = C3- (1/2)*(C4+Cz) ;
+    C4_prime = C4- (1/2)*(C3+Cz) ;
+    Cz_prime = Cz- (1/2)*(C4+C3) ;
+    
+    %%% 2ND : LAPLACIAN FILTER %%%
+    d_C3 = [4 8]; %% Cz followed by C3, distance in cm
+    w_hi = (1./d_C3)./(sum(1./d_C3));
+    C3_lap = C3 - w_hi(1).*Cz - w_hi(2).*C4;
+    
+    %% Temporal Filtering
+    
+    C3_filtered = filter(b_fir_mu,1,C3_prime); % C3_prime but let's modify it
+    C4_filtered = filter(b_fir_mu,1,C4_prime);
+    Cz_filtered = filter(b_fir_mu,1,Cz_prime);
+    
+    figure
+    subplot(3,1,1);
+    plot(time,C3_filtered);
+    title(' C3 After CAR & BDP');
+    subplot(3,1,2);
+    plot(time,Cz_filtered);
+    title(' Cz After CAR & BDP');
+    subplot(3,1,3);
+    plot(time,C4_filtered);
+    title(' C4 After CAR & BDP');
+    
+    %% CSP (Back to spatial filtering)
+    
+    %%% 3RD : Common spetcral patteren %%%. Notice that this is an adaptive
+    %%% technique
+    % Notice that we assume that X = [C3 Cz C4] (from left to right)
+    
+    R_ave_right = zeros(3,3);
+    for i = 1:1:10
+        load(['/Users/matthieu/GitHub/MasterThesis_BCI/GUI/Data_for_CSP/EEG_Signals_Right_Trial_' num2str(i) '.mat']);
+        R_normalized_current = spatial_cov_computation(Fs,C3,C4,Cz,time);
+        R_ave_right = R_ave_right + R_normalized_current;
+    end
+    R_ave_right = R_ave_right./10;
+    
+    R_ave_left = zeros(3,3);
+    for i = 1:1:10
+        load(['/Users/matthieu/GitHub/MasterThesis_BCI/GUI/Data_for_CSP/EEG_Signals_Left_Trial_' num2str(i) '.mat']);
+        R_normalized_current = spatial_cov_computation(Fs,C3,C4,Cz,time);
+        R_ave_left = R_ave_left + R_normalized_current;
+    end
+    R_ave_left = R_ave_left./10;
+    R_tot = R_ave_right + R_ave_left;
+    [U,D] = eig(R_tot);
+    P = (inv(D))^(1/2);
+    %% Feature extraction using BandPower (or variance and a windows of 3s )
+    %First Windowing around the moment
+    t_move = 10;
+    index_time = find(time ==t_move);
+    wlen = 3*Fs;
+    win = (hamming(wlen, 'periodic')).';
+    
+    C3_win = C3_filtered(index_time-Fs+1+filter_order/2:index_time+2*Fs+filter_order/2).*win;
+    C4_win = C4_filtered(index_time-Fs+1+filter_order/2:index_time+2*Fs+filter_order/2).*win;
+    Cz_win = Cz_filtered(index_time-Fs+1+filter_order/2:index_time+2*Fs+filter_order/2).*win;
+    var_tot = var(C3_win) + var(Cz_win) + var(C4_win); %% Used for normalisation ! 
+    feature_vec = [var(C3_win); var(Cz_win); var(C4_win); 2*var_tot]./var_tot;
+    yfit = trainedModel2.predictFcn(feature_vec(1:3)')
+    feature_mat(i,:) = feature_vec.';
 end
-R_ave_right = R_ave_right./10;
 
-R_ave_left = zeros(3,3);
-for i = 1:1:10
-    load(['/Users/matthieu/GitHub/MasterThesis_BCI/GUI/Data_for_CSP/EEG_Signals_Left_Trial_' num2str(i) '.mat']);
-    R_normalized_current = spatial_cov_computation(Fs,C3,C4,Cz,time);
-    R_ave_left = R_ave_left + R_normalized_current;
-end
-R_ave_left = R_ave_left./10;
-R_tot = R_ave_right + R_ave_left;
-%% Feature extraction using BandPower (or variance and a windows of 3s )
-%First Windowing 
-t_move = 10;
-index_time = find(time ==t_move);
-wlen = 3*Fs;
-win = (hamming(wlen, 'periodic')).';
-C3_win = C3(index_time-Fs+1:index_time+2*Fs).*win;
-C4_win = C4(index_time-Fs+1:index_time+2*Fs).*win;
-Cz_win = Cz(index_time-Fs+1:index_time+2*Fs).*win;
+
+%%% First trial of machine learning prediction 
+
+
 
 
 
