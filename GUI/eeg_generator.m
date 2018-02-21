@@ -181,7 +181,6 @@ Y = awgn(sin_mat_C3,SNR,'measured');
 C3= Y;
 C4 = awgn(sin_mat_C4,SNR,'measured');
 Cz = awgn(sin_mat_Cz,SNR,'measured');
-<<<<<<< HEAD
 
 %% Save the signals and parameters
 % save('channels.mat','C3','C4','Cz')
@@ -197,9 +196,7 @@ Cz = awgn(sin_mat_Cz,SNR,'measured');
 % 
 
 %% Plots and figures
-=======
 time = t;
->>>>>>> origin/master
 figure;
 subplot(2,1,1)
 plot(t,Y)
@@ -215,7 +212,6 @@ xlabel('frequency [Hz]');
 ylabel('Magnitude [dB]');
 grid on
 
-<<<<<<< HEAD
 nyq_freq = Fs./2; %% Half the sampling rate; nyquist frequency
 wlen = 2*Fs;
 hop = Fs;
@@ -230,14 +226,12 @@ title('C3 STFT');
 figure;
 spectrogram(C4,512,256,dft_size,Fs,'psd');
 title('C4 STFT')
-=======
 % nyq_freq = Fs./2; %% Half the sampling rate; nyquist frequency
 % wlen = 2*Fs;
 % hop = Fs;
 % [stft_tot, freq_vec, time_vec] = stft(Y, wlen, hop, dft_size, Fs);
 % figure;
 % surf(time_vec,freq_vec',mag2db(abs(stft_tot)));
->>>>>>> origin/master
 
 
 figure;
