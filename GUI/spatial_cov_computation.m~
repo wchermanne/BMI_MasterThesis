@@ -1,0 +1,12 @@
+function [] = spatial_cov_computation(Fs,C3,C4,Cz,time)
+%UNTITLED Summary of this function goes here
+%   Detailed explanation goes her
+t_move
+index_time = find(time ==t_move);
+wlen = 3*Fs;
+win = hamming(wlen, 'periodic');
+C3_win = C3(index_time-Fs:index_time+2*Fs).*win;
+outputArg1 = inputArg1;
+outputArg2 = inputArg2;
+end
+
