@@ -9,8 +9,6 @@ function [data_filtered] = CAR(data)
 % 
 % The CAR functions returns the filtered EEG signals
 
-average=mean(data); % Vector containing the average for each set of samples for each timestep
-data_filtered=data-average;
 
 end
 
