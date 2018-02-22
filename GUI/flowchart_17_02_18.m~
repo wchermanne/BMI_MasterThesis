@@ -1,8 +1,8 @@
-feature_mat = ones(12,3);
+feature_mat = ones(10,3);
 load('LDA_with_CSP.mat')
-for i = 11:1:12
+for i = 1:1:10
     %% Loading data
-    load(['/Users/matthieu/GitHub/BMI_MasterThesis/GUI/Data_for_CSP/EEG_Signals_Left_Trial_' num2str(i) '.mat']);
+    load(['/Users/matthieu/GitHub/BMI_MasterThesis/GUI/Data_for_CSP/EEG_Signals_Right_Trial_' num2str(i) '.mat']);
     nyq_freq = Fs/2;
     Y = C3;
     t = time;
@@ -140,7 +140,6 @@ for i = 11:1:12
     S2_win = S(2,index_time-Fs+1+filter_order/2:index_time+2*Fs+filter_order/2).*win;
     var_tot = var(S1_win) + var(S2_win); %% Used for normalisation !
     feature_vec = log([var(S1_win); var(S2_win)]./var_tot);
-    fit = trainedModelCSP.predictFcn(feature_vec')
     feature_mat(i,:) = [feature_vec;1].';
 end
 close all
