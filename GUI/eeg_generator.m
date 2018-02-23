@@ -181,7 +181,7 @@ Y = awgn(sin_mat_C3,SNR,'measured');
 C3= Y;
 C4 = awgn(sin_mat_C4,SNR,'measured');
 Cz = awgn(sin_mat_Cz,SNR,'measured');
-
+time=t;
 
 %% Figures and plots
 figure;
