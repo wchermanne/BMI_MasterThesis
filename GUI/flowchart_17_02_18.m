@@ -1,6 +1,5 @@
 feature_mat = ones(12,3);
-load('LDA_with_CSP.mat')
-for i = 11:1:12
+for i = 4:1:4
     %% Loading data
     load(['/Users/matthieu/GitHub/BMI_MasterThesis/GUI/Data_for_CSP/EEG_Signals_Left_Trial_' num2str(i) '.mat']);
     nyq_freq = Fs/2;
@@ -13,6 +12,7 @@ for i = 11:1:12
     plot(time,Cz)
     subplot(3,1,3)
     plot(time,C4)
+    
     
     %% Frequency Filtering & suuband creation for
     %%% One might use bandpass filtering from 3Hz (larger than EOG and eye blink artifacts)
@@ -89,6 +89,21 @@ for i = 11:1:12
     plot(time,C4_filtered);
     title(' C4 After CAR & BDP');
     
+    wname = 'sym1'; %% 'sym6'
+    level = 7;
+    
+    [C,L] = wavedec(C3_filtered,level,wname);
+    [CA,CD] = dwt(C3_filtered,wname);
+    figure;
+    for kl = 1:1:level+1
+        subplot(level+1,1,kl)
+        current_length = L(kl);
+        Cplot =C(1:current_length)
+        C = C(current_length+1:end);
+        plot(Cplot)
+        title(['cD' num2str(kl)]);
+    end
+    
     %% CSP (Back to spatial filtering)
     
     %%% 3RD : Common spetcral patteren %%%. Notice that this is an adaptive
@@ -140,10 +155,10 @@ for i = 11:1:12
     S2_win = S(2,index_time-Fs+1+filter_order/2:index_time+2*Fs+filter_order/2).*win;
     var_tot = var(S1_win) + var(S2_win); %% Used for normalisation !
     feature_vec = log([var(S1_win); var(S2_win)]./var_tot);
-    fit = trainedModelCSP.predictFcn(feature_vec')
+ 
     feature_mat(i,:) = [feature_vec;1].';
 end
-close all
+
 
 %%% First trial of machine learning prediction 
 

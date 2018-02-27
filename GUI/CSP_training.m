@@ -5,7 +5,7 @@ function [W_Csp] = CSP_training(b_fir_mu)
 % Notice that we assume that X = [C3 Cz C4] (from left to right)
 
 R_ave_right = zeros(3,3);
-for k = 12:1:20
+for k = 1:1:10
     load(['/Users/matthieu/GitHub/MasterThesis_BCI/GUI/Data_for_CSP/EEG_Signals_Right_Trial_' num2str(k) '.mat']);
     C3_filtered = filter(b_fir_mu,1,C3); % C3_prime but let's modify it
     C4_filtered = filter(b_fir_mu,1,C4);
@@ -16,7 +16,7 @@ end
 R_ave_right = R_ave_right./10;
 
 R_ave_left = zeros(3,3);
-for k = 12:1:20
+for k = 1:1:10
     load(['/Users/matthieu/GitHub/MasterThesis_BCI/GUI/Data_for_CSP/EEG_Signals_Left_Trial_' num2str(k) '.mat']);
     C3_filtered = filter(b_fir_mu,1,C3); % C3_prime but let's modify it
     C4_filtered = filter(b_fir_mu,1,C4);
