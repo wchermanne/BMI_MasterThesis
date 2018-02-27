@@ -50,7 +50,7 @@ for i = 1:1:20
     %% Feature extraction using BandPower (or variance and a windows of 3s )
     %First Windowing around the moment
     t_move = 10;
-    index_time = find(time ==t_move);
+    index_time = find(time==t_move);
     wlen = 3*Fs;
     win = (hamming(wlen, 'periodic')).';
     
