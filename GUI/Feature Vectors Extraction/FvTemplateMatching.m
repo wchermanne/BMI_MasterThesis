@@ -5,11 +5,11 @@ function [outputArg1,outputArg2] = FvTemplateMatching(X,t,template,Fs)
 % the dimension of the template must be the same as the X vector (matrix);
 % The samplign frequency Fs
 % 
-% Output : feature vector made of the integration value for the current
-% block or matrix . Notice that if the input X is a
+% Output : feature vector made of the correlation value for the current
+% block or matrix with a given template . Notice that if the input X is a
 % N*T matrix, the feature vector will have a size of N.
 %
-% Example : [IntValue] = FvTimeIntegration(X,t,256);
+% Example : [XcorrValue] = FvTemplateMatching(X,t,template,256);
 %
 % Notice that this method assumes a training session 
 

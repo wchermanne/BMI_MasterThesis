@@ -1,0 +1,17 @@
+function [outputArg1] = FvLogNormalisation(feature_in)
+%This function modfies the feature vector for normalizing it.
+% Input : input feature vector feature_in;
+%
+% Output : feature vector is log-normalized.
+%
+% Example : [feature_out] = FvLogNormalisation(feature_in);
+sum_fv = sum(feature_in);
+feature_reg = feature_in./(sum_fv);
+
+feature_out = ones(size(X,1),1);
+for k = 1:1:size(X,1)
+    feature_out(k) = var(X(k,:));
+end
+outputArg1 = feature_out;
+end
+
