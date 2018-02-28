@@ -8,12 +8,14 @@
 % 5) Classification algorithm based on Linear SVM/ Linear LDA/ Fine KNN
 
 %% TRAINING PART %%%%%%% Now 3 class are required ! Rigth, Left & Rest
+
 side = 2;
 if(side==1)
     text_side = 'Right';
 else
     text_side = 'Left';
 end
+
 level = 5;
 feature_mat = ones(20,3);
 wavelet_feature_mat = ones(20,2*level+1);

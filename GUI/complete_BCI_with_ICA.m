@@ -11,7 +11,7 @@ feature_mat = ones(10,3);
 feature_mat_rest = ones(10,3);
 for i = 1:1:3
     %% Loading data
-    load(['/Users/matthieu/GitHub/BMI_MasterThesis/GUI/Data_for_CSP/EEG_Signals_Right_Trial_' num2str(i) '.mat']);
+    load(['/Users/will/Desktop/BMI_MasterThesis/GUI/Data_for_CSP/EEG_Signals_Right_Trial_' num2str(i) '.mat']);
     nyq_freq = Fs/2;
     %% Frequency Filtering & suuband creation for
     %%% One might use bandpass filtering from 3Hz (larger than EOG and eye blink artifacts)

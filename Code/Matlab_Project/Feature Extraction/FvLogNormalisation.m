@@ -7,10 +7,10 @@ function [outputArg1] = FvLogNormalisation(feature_in)
 % Example : [feature_out] = FvLogNormalisation(feature_in);
 sum_fv = sum(feature_in);
 feature_reg = feature_in./(sum_fv);
-
-feature_out = ones(size(X,1),1);
-for k = 1:1:size(X,1)
-    feature_out(k) = var(X(k,:));
+if(sum(feature_reg>0)==0) %% Check that each entry in feature_reg is > 0 
+    feature_out = log(feature_reg);
+else
+    error('The vector is totally/partially negative')
 end
 outputArg1 = feature_out;
 end

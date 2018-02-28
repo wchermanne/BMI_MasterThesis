@@ -1,4 +1,32 @@
 function [myFilteredData]=temporalFtFiltering(myFtData,LFreq,HFreq,NotchFilter,bpftype,wintype,order,band)
+%% Informations
+% This functions preprocesses the data
+%
+% INPUTS 
+%
+% myFtData is the FieldTrip Structure containing the trials and the relevant
+% data. The signals are contained in data.trial{1}
+%
+% LFreq is the low pass frequency of the BP filter, in Hz
+%
+% HFreq is the high pass frequency of the BP filter, in Hz
+%
+% NotchFilter is 1 if a NotchFilter needs to be applied, 0 if not
+%
+% bpftype is the type of BP filter used. 'firws','but' or 'fir'
+%
+% wintype is the type of window used for firws filters
+%
+% order is the order of the bp filter 
+%
+% band is the string containing information about the frequency band being
+% processed
+%
+% OUTPUTS
+%
+% data_filtered is the FieldTrip Structure containing the filtered data
+
+
 %% Preprocessing with filtering
 cfg = [];
 cfg.channel='all';

@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = FvTimeIntegration(X,t,Fs)
+function [outputArg1] = FvTimeIntegration(X,t,Fs)
 %This function returns a feature vector using the time integration method
 %based on Darboux sum.
 % Input : vector or matrix of samples X;  time vector
@@ -11,7 +11,7 @@ function [outputArg1,outputArg2] = FvTimeIntegration(X,t,Fs)
 % Example : [IntValue] = FvTimeIntegration(X,t,256);
 if (Fs <=0 || Fs >= 2001)
     error('Choose a valid sampling frequency (1 -> 2KHz)')
-end 
+end
 
 if(length(t) == size(X,2))
     
@@ -27,16 +27,9 @@ end
 
 feature_out = ones(size(X,1),1);
 for k = 1:1:size(X,1)
-    if (op == 1)
-    feature_out(k) = (X(k,:)*ones(size(X,1),1)).*(1/Fs);
-    time_out(k) = t(indx);
-    else
-    [feature_out(k),indx] = min(X(:,k)); 
-    time_out(k) = t(indx);
-    end
+    feature_out(k) = (X(k,:).^2*ones(size(X,2),1)).*(1/Fs);
 end
 outputArg1 = feature_out;
-outputArg2 = ftime_out;
 end
 
 

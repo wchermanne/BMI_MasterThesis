@@ -1,4 +1,18 @@
 function [mySpectralData]=FreqTransform(data,band)
+%% Informations
+% This functions performs a frequency analysis of the data
+%
+% INPUTS 
+%
+% data is the FieldTrip Structure containing the trials and the relevant
+% data. The signals are contained in data.trial{1}
+% band is the string containing information about the frequency band being
+% processed
+%
+% OUTPUTS
+%
+% data_filtered is the FieldTrip Structure containing the filtered data
+
 %% Frequency analysis 
 cfg = [];
 cfg.method = 'mtmfft'; 
