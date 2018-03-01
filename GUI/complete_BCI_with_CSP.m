@@ -9,7 +9,7 @@
 
 %% TRAINING PART %%%%%%% Now 3 class are required ! Rigth, Left & Rest
 
-side = 2;
+side = 1;
 if(side==1)
     text_side = 'Right';
 else
@@ -70,7 +70,7 @@ for i = 1:1:20
     var_tot = var(S1_win) + var(S2_win); %% Used for normalisation !
     feature_vec = log([var(S1_win); var(S2_win)]./var_tot);
     wname = 'db1'; %% 'sym6' or 'db1'
-    figure; subplot(2,1,1); plot(S1_win); subplot(2,1,2); plot(S2_win)
+    %figure; subplot(2,1,1); plot(S1_win); subplot(2,1,2); plot(S2_win)
     
     [C_1,Level_1] = wavedec(S1_win,level,wname);
     [C_2,Level_2] = wavedec(S2_win,level,wname);
@@ -95,7 +95,7 @@ for i = 1:1:20
     var_tot = var(S1_win) + var(S2_win); %% Used for normalisation !
     feature_vec_rest = log([var(S1_win); var(S2_win)]./var_tot);
     
-    figure; subplot(2,1,1); plot(S1_win); subplot(2,1,2); plot(S2_win)
+    %figure; subplot(2,1,1); plot(S1_win); subplot(2,1,2); plot(S2_win)
     [C_1,Level_1] = wavedec(S2_win,level,wname);
     [C_2,Level_2] = wavedec(S2_win,level,wname);
     wavelet_feature_vec = [];
@@ -127,7 +127,7 @@ close all
 
 %% TESTING PART %%%%%%%%%%%%%
 load('KNN.mat')
-load(['/Users/matthieu/GitHub/BMI_MasterThesis/GUI/Data_for_CSP/EEG_Signals_Left_Trial_6.mat']);
+load(['/Users/matthieu/GitHub/BMI_MasterThesis/GUI/Data_for_CSP/EEG_Signals_Right_Trial_18.mat']);
 
 %%% Temporal Filtering
 
@@ -140,33 +140,34 @@ S = (W_Csp.')*[C3_filtered; Cz_filtered; C4_filtered];
 %%% Wavelet Transform
 
 
-wname = 'sym1'; %% 'sym6' or 'db1'
-level = 6;
+% wname = 'sym1'; %% 'sym6' or 'db1'
+% level = 6;
+% 
+% [C_1,Level_1] = wavedec(S(1,:),level,wname);
+% figure;
+% for kl = 1:1:level+1
+%     subplot(level+1,1,kl)
+%     current_length = Level_1(kl);
+%     Cplot =C_1(1:current_length)
+%     C_1 = C_1(current_length+1:end);
+%     plot(Cplot)
+%     title(['cD' num2str(kl)]);
+% end
+% 
+% 
+% [C_2,Level_2] = wavedec(S(2,:),level,wname);
+% figure;
+% for kl = 1:1:level+1
+%     subplot(level+1,1,kl)
+%     current_length = Level_2(kl);
+%     Cplot =C_2(1:current_length)
+%     C_2 = C_2(current_length+1:end);
+%     plot(Cplot)
+%     title(['cD' num2str(kl)]);
+% end
+% 
+% figure; subplot(2,1,1); plot(S(1,:)); subplot(2,1,2); plot(S(2,:));
 
-[C_1,Level_1] = wavedec(S(1,:),level,wname);
-figure;
-for kl = 1:1:level+1
-    subplot(level+1,1,kl)
-    current_length = Level_1(kl);
-    Cplot =C_1(1:current_length)
-    C_1 = C_1(current_length+1:end);
-    plot(Cplot)
-    title(['cD' num2str(kl)]);
-end
-
-
-[C_2,Level_2] = wavedec(S(2,:),level,wname);
-figure;
-for kl = 1:1:level+1
-    subplot(level+1,1,kl)
-    current_length = Level_2(kl);
-    Cplot =C_2(1:current_length)
-    C_2 = C_2(current_length+1:end);
-    plot(Cplot)
-    title(['cD' num2str(kl)]);
-end
-
-figure; subplot(2,1,1); plot(S(1,:)); subplot(2,1,2); plot(S(2,:));
 %%% Windowing & Framing
 WindowedSig = windowing_framing(Fs,time,S,3,1000);
 S1 =  WindowedSig.Channel(1).X;
@@ -175,12 +176,34 @@ S2 = WindowedSig.Channel(2).X;
 for k = 1:1:size(WindowedSig.Channel(1).X,2)
     S1_win = S1(:,k);
     S2_win = S2(:,k);
-    var_tot = var(S1_win) + var(S2_win); %% Used for normalisation !
-    feature_vec = log([var(S1_win); var(S2_win)]./var_tot);
-    fit = trainedModelKNN.predictFcn(feature_vec');
-    if(fit == 1)
-        char = 'Left Movement Detected!'
-    elseif(fit==2)
+    wname = 'db1';
+    [C_1,Level_1] = wavedec(S1_win,level,wname);
+    [C_2,Level_2] = wavedec(S2_win,level,wname);
+    wavelet_feature_vec = [];
+    wavelet_var_tot = 0;
+    for kl = 2:1:level+1
+        current_length = Level_1(kl);
+        Cplot =C_1(1:current_length);
+        C_1 = C_1(current_length+1:end);
+        current_length_2 = Level_2(kl);
+        Cplot_2 =C_2(1:current_length_2);
+        C_2 = C_2(current_length_2+1:end);
+        wavelet_var_tot = wavelet_var_tot + var(Cplot) + var(Cplot_2);
+        wavelet_feature_vec = [wavelet_feature_vec; (var(Cplot)) ; var(Cplot_2)];
+    end
+    feature_vec = log(wavelet_feature_vec./wavelet_var_tot);
+    fit = trainedModel.predictFcn(feature_vec.');
+    fit_2 = FtNaiveKNN(trainedModel,feature_vec);
+    if (fit_2 ~= fit)
+        char = 'error';
+    end
+      
+    if(fit_2 == 1)
         char = 'Right Movement Detected!'
+    elseif(fit_2==2)
+        char = 'Left Movement Detected!'
+    elseif(fit_2 ==3)
+        char = 'Rest'
     end
 end
+

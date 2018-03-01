@@ -1,7 +1,5 @@
-function [outputArg1,outputArg2,outputArg3] = FvAutoRegressive(X,t,Fs,p)
-%This function returns a feature vector using the AR method. The current
-% sample might be predicted as a linear combination of
-% the previous samples + a prediction error. The algorithm used here is based on Levinson Durbin algorithm
+function [outputArg1,outputArg2,outputArg3] = FvWavelets(X,t,Fs,p,type)
+%This function returns a feature vector using the Wavelet method.
 % Input : vector or matrix of samples X;  time vector
 % of the sample time; The sampling frequency Fs, the order of the AR model
 % p;
@@ -54,13 +52,8 @@ for m=1:N-1
 end
 Eres=sum(r.*a,1);
 
-outputArg1 = a;
+outputArg1 = reshape(a,[],1);
 outputArg2 = k;
 outputArg3 = Eres;
 end
-
-
-
-
-
 
