@@ -27,7 +27,8 @@ function [myFilteredData]=temporalFtFiltering(myFtData,LFreq,HFreq,NotchFilter,b
 % data_filtered is the FieldTrip Structure containing the filtered data
 
 
-%% Preprocessing with filtering
+%% Preprocessing with filtering using the FieldTrip functions
+
 cfg = [];
 cfg.channel='all';
 cfg.lpfilter      = 'yes' 

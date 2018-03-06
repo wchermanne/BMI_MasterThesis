@@ -1,14 +1,21 @@
 function [outputArg1] = FvTimeIntegration(X,t,Fs)
-%This function returns a feature vector using the time integration method
-%based on Darboux sum.
-% Input : vector or matrix of samples X;  time vector
-% of the sample time; Sampling frequency Fs;
+%% Informations
+% This function returns a feature vector using the time integration method
+% based on Darboux sum.
 %
-% Output : feature vector made of the integration value for the current
-% block or matrix . Notice that if the input X is a
-% N*T matrix, the feature vector will have a size of N.
+% INPUTS 
 %
-% Example : [IntValue] = FvTimeIntegration(X,t,256);
+% X is the vector or matric of samples of interest
+%
+% t is the time vector
+%
+% Fs is the sample frequency
+%
+% OUTPUTS
+%
+% outputArg1 is the feature vector
+
+%% Code
 if (Fs <=0 || Fs >= 2001)
     error('Choose a valid sampling frequency (1 -> 2KHz)')
 end
@@ -29,6 +36,8 @@ feature_out = ones(size(X,1),1);
 for k = 1:1:size(X,1)
     feature_out(k) = (X(k,:).^2*ones(size(X,2),1)).*(1/Fs);
 end
+
+%% Output
 outputArg1 = feature_out;
 end
 
