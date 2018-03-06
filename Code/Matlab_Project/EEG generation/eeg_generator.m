@@ -1,35 +1,72 @@
 function [C3,C4,Cz,time] = eeg_generator(Fs,t_end,SNR,movement, time_movement,eye_blink,power_line_check)
+%% Informations
+% This functions applies creates EEG signals using the Adaptative Markov
+% Process Approach
+%
+% INPUTS 
+%
+% Fs is the sampling frequency
+%
+% t_end is the duration of the signal
+%
+% SNR is the signal to noise ratio in DB
+%
+% movement is the type of movement. It can be 1, 2 or 3
+%
+% time_movement is the starting time of the movement
+%
+% eye_blink is 1 if the signal should include an eye blink, 0 if not
+%
+% power_line_check is 1 if the signal should include an power at 50 Hz, 0
+% if not
+%
+% OUTPUTS
+%
+% C3 is the signal for electrode C3
+%
+% C4 is the signal for electrode C4
+%
+% Cz is the signal for electrode Cz
+
+
 %%% Signal generation for test (continuous sensorimotor rythm ) using 1st Order MPA
 %%% LEFT = 2
 %%% RIGHT =1
+
+%% Frequency and amplitude vectors
 freq = linspace(0,41,42);
 amp = [0.5 4/8 7/8 4/8 2.5 0.3 0.15 0.3 3 5 6 8 5 4 2 1.5 1.2 1 0.9 0.6 0.4 0.2 0.1 0.1 0.05 0.03 0.02 0.01 0.008 0.004 0.002 0.001 0.0008 0.0005 0.0003 0.0001 0.0001 0.00008 0.00008 0.000053 0.000033 0.00002]*10;
+
 if(power_line_check ==1)
     freq = [freq 50]';
     amp = [amp 200];
 end
+
 amp_4 = amp;
 amp_z = amp;
 
+%% Create phi and time vectors
 phi = linspace(pi/4,pi/2,length(amp)) + pi./10*rand(1,length(amp)) - pi./20;
 t = 0:1/Fs:t_end;
+
+%% Create the matrices
 sin_mat_C3 = zeros(1,length(t));
 sin_mat_C4 = zeros(1,length(t));
 sin_mat_Cz = zeros(1,length(t));
 logbook_gamma = zeros(1,length(t));
 logbook_amp =  zeros(1,length(t));
 
-%%%% Lower mu rhythm %%%%%
+%% Lower mu rhythm
 mu_ERD_duration = 0.5 + 0.1*rand;
 
-%%%% Lower mu rhythm %%%%%
+%% Mu rhythm %%%%%
 upper_mu_ERS = (time_movement./2)*(0.6 + 0.2*rand); %% between 60% and 100%
 upper_mu_ERD = (time_movement./2)*(0.8 + 0.4*rand); %% Between 80% and 100 %
 
-%%%% Characteristics of the movement %%%%
+%% Characteristics of the movement 
 movement_duration = 1;
 
-%%% Taking eye blink effect into account
+%% Eye blink definition
 eye_blink_occurence = eye_blink;
 time_eye_blink = ones(1,eye_blink_occurence);
 eye_blink_rising_duration = 0.08 + 0.01*rand;
@@ -39,12 +76,12 @@ for k =1:1:eye_blink_occurence
     eye_blink_steady_duration(k) =0.2 + 0.2*rand;
 end
 
-%%% Gamma ERD prior to a movement
+%% Gamma ERD before a movement
 gamma_ERD_duration = 0.3 + 0.1*rand;
 
+%% Now, build the signals
 for l = 1:1:length(t)
-    %%% Taking Event-related desynchronization and resync for lower mu
-    %%% rhythm. That happens for any motor task
+    %% Taking Event-related desynchronization and resync for lower mu
     if (t(l) <= time_movement-mu_ERD_duration && t(l) >= time_movement-2*mu_ERD_duration)
         amp(8:10) = 0.98.*amp(8:10);
         amp_4(8:10) = 0.98.*amp_4(8:10);
@@ -56,7 +93,7 @@ for l = 1:1:length(t)
         amp_z(8:10) = 1.*amp_z(8:10)./0.98;
     end
     
-    %%% Taking ERS for upper mu (ipsilateral side increases)
+    %% Taking ERS for upper mu (ipsilateral side increases)
     %%% rhythm.
     ERS_mu_factor = 1.002;
     ERS_mu_factor_z = 1.0005;
@@ -79,8 +116,8 @@ for l = 1:1:length(t)
         end
     end
     
-        %%% Taking ERD for upper mu
-    %%% rhythm.
+    %% Taking ERD for upper mu
+    
     if (t(l) >= time_movement && t(l) <= time_movement + upper_mu_ERD/2)
         if(movement == 2)
             amp_4(11:13) = 0.985.*amp_4(11:13);
@@ -96,8 +133,8 @@ for l = 1:1:length(t)
         end
     end
     
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%% Taking Beta rhythm into account
+
+    %% Taking Beta rhythm into account
     if (t(l) >= time_movement && t(l) <= time_movement+movement_duration)
         if(movement == 2)
             amp(18:26) = 1.005.*amp(18:26);
@@ -121,8 +158,8 @@ for l = 1:1:length(t)
         end
     end
     
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%% Taking Gamma rhythm into account
+
+    %% Taking Gamma rhythm into account
     if (t(l) <= time_movement && t(l) >= time_movement-1*gamma_ERD_duration)
         amp(39:41) = 1.11.*amp(39:41);
         amp_4(39:41) = 1.11.*amp_4(39:41);
@@ -133,8 +170,7 @@ for l = 1:1:length(t)
         amp_4(39:41) = amp_4(39:41)./(1.11);
         amp_z(39:41) = amp_z(39:41)./(1.11);
     end
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%% Taking Eye Blink
+    %% Taking Eye Blink
     if(isempty(time_eye_blink) ==1)
         
     else
@@ -175,8 +211,8 @@ for l = 1:1:length(t)
         amp_z(end) = 200;
     end
 end
-% figure; plot(logbook_amp)
-%%% Add noise contribution
+
+%% Add noise contribution
 Y = awgn(sin_mat_C3,SNR,'measured');
 C3= Y;
 C4 = awgn(sin_mat_C4,SNR,'measured');
