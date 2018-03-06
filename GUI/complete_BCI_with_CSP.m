@@ -9,7 +9,7 @@
 
 %% TRAINING PART %%%%%%% Now 3 class are required ! Rigth, Left & Rest
 
-side = 1;
+side = 2;
 if(side==1)
     text_side = 'Right';
 else
@@ -172,26 +172,30 @@ S = (W_Csp.')*[C3_filtered; Cz_filtered; C4_filtered];
 WindowedSig = windowing_framing(Fs,time,S,3,1000);
 S1 =  WindowedSig.Channel(1).X;
 S2 = WindowedSig.Channel(2).X;
-
+timeS = WindowedSig.time;
 for k = 1:1:size(WindowedSig.Channel(1).X,2)
     S1_win = S1(:,k);
     S2_win = S2(:,k);
+    timeSwin = timeS(:,k);
     wname = 'db1';
-    [C_1,Level_1] = wavedec(S1_win,level,wname);
-    [C_2,Level_2] = wavedec(S2_win,level,wname);
-    wavelet_feature_vec = [];
-    wavelet_var_tot = 0;
-    for kl = 2:1:level+1
-        current_length = Level_1(kl);
-        Cplot =C_1(1:current_length);
-        C_1 = C_1(current_length+1:end);
-        current_length_2 = Level_2(kl);
-        Cplot_2 =C_2(1:current_length_2);
-        C_2 = C_2(current_length_2+1:end);
-        wavelet_var_tot = wavelet_var_tot + var(Cplot) + var(Cplot_2);
-        wavelet_feature_vec = [wavelet_feature_vec; (var(Cplot)) ; var(Cplot_2)];
-    end
-    feature_vec = log(wavelet_feature_vec./wavelet_var_tot);
+    feature_vec = FvWavelets([S1_win S2_win],timeSwin,Fs,level,wname);
+%     [C_1,Level_1] = wavedec(S1_win,level,wname);
+%     [C_2,Level_2] = wavedec(S2_win,level,wname);
+%     wavelet_feature_vec = [];
+%     wavelet_var_tot = 0;
+%     for kl = 2:1:level+1
+%         current_length = Level_1(kl);
+%         Cplot =C_1(1:current_length);
+%         C_1 = C_1(current_length+1:end);
+%         current_length_2 = Level_2(kl);
+%         Cplot_2 =C_2(1:current_length_2);
+%         C_2 = C_2(current_length_2+1:end);
+%         wavelet_var_tot = wavelet_var_tot + var(Cplot) + var(Cplot_2);
+%         wavelet_feature_vec = [wavelet_feature_vec; (var(Cplot)) ; var(Cplot_2)];
+%     end
+%     feature_vec = log(wavelet_feature_vec./wavelet_var_tot);
+
+
     fit = trainedModel.predictFcn(feature_vec.');
     fit_2 = FtNaiveKNN(trainedModel,feature_vec);
     if (fit_2 ~= fit)

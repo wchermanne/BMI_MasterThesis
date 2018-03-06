@@ -1,14 +1,14 @@
-function [outputArg1,outputArg2,outputArg3] = FvWavelets(X,t,Fs,p,type)
+function [outputArg1] = FvWavelets(X,t,Fs,p,type)
 %This function returns a feature vector using the Wavelet method.
 % Input : vector or matrix of samples X;  time vector
-% of the sample time; The sampling frequency Fs, the order of the AR model
+% of the sample time; The sampling frequency Fs, the order of the wavelet model
 % p;
 %
 % Output : feature vector made of the correlation value for the current
 % block or matrix with a given template . Notice that if the input X is a
 % N*T matrix, the feature vector will have a size of N.
 %
-% Example : [ARValue] =FvAutoRegressive(X,t,256,10);
+% Example : [WaveletValue] =FvWavelets(X,t,Fs,p,type)
 
 if (Fs <=0 || Fs >= 2001)
     error('Choose a valid sampling frequency (1 -> 2KHz)')
@@ -26,34 +26,34 @@ else
     error('Time vector must has the same length as the number of rows of X');
 end
 
-% Autocorrelation part
-r=zeros(p+1,size(X,1));
+% wavelet decomposition analysis
+wname = type;
+CMatrix = [];
+LevelMatrix = [];
 for ch = 1:1:size(X,1)
-    for k=1:p+1
-        r(k,ch)=sum(X(ch,k:end).*X(ch,1:end-k+1));
+    [C,Level] = wavedec(X(ch,:),p,wname);
+    CMatrix =[CMatrix ; C];
+    LevelMatrix = [LevelMatrix ; Level];
+end
+
+wavelet_feature_vec = [];
+wavelet_var_tot = 0;
+
+CMatrix = CMatrix(:,LevelMatrix(1,1)+1:end); %% Remove the A_level (Approximation level) component that does not interest us
+
+for kl = 2:1:p+1
+    current_length = LevelMatrix(1,kl);
+    Cdec = CMatrix(:,1:current_length);
+    CMatrix =  CMatrix(:,current_length+1:end); 
+    wavelet_tot_current = 0;
+    for chX = 1:1:size(X,1)
+        wavelet_tot_current = wavelet_tot_current + var(Cdec(chX,:));
     end
+    wavelet_var_tot = wavelet_var_tot + wavelet_tot_current;
+    featureVec = var(Cdec.');
+    wavelet_feature_vec = [wavelet_feature_vec; featureVec.'];
 end
 
-
-% a = predicition polynomial coefficients, including the leading 1 (a0)
-% Beware for sign: use polynomial coefficients as-is: freqz(1,a(:,frame))
-% is transfer function
-% k = reflection coefficients
-% Eres: variance of the residual
-
-[N,T]=size(r);
-a=zeros(N,T);
-a(1,:)=1; % Leading 1 (a0)
-k=zeros(N-1,T);
-
-for m=1:N-1
-    k(m,:)=sum(r(m+1:-1:2,:).*a(1:m,:),1) ./ sum(r.*a,1);
-    a(2:m+1,:)=a(2:m+1,:)-k(m*ones(m,1),:).*a(m:-1:1,:);
-end
-Eres=sum(r.*a,1);
-
-outputArg1 = reshape(a,[],1);
-outputArg2 = k;
-outputArg3 = Eres;
+outputArg1 = log(wavelet_feature_vec./wavelet_var_tot);
 end
 
