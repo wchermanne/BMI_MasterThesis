@@ -31,11 +31,9 @@ function [myFilteredData]=temporalFtFiltering(myFtData,LFreq,HFreq,NotchFilter,b
 
 cfg = [];
 cfg.channel='all';
-cfg.lpfilter      = 'yes' 
-cfg.hpfilter      = 'yes' 
-cfg.dftfilter     = 'yes' 
-cfg.lpfreq        = HFreq;
-cfg.hpfreq        = LFreq;
+cfg.bpfilter      = 'yes' 
+cfg.bpfreq        = [LFreq HFreq];
+
 if(NotchFilter==1)
     cfg.dftfilter     = 'yes'
 else

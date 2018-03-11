@@ -19,9 +19,9 @@ C3=data(1,:);
 C4=data(2,:);
 Cz=data(3,:);
 
-C3_prime = C3- (1/3)*(C3+C4+Cz) ;
-C4_prime = C4- (1/3)*(C3+C4+Cz) ;
-Cz_prime = Cz- (1/3)*(C3+C4+Cz) ;
+C3_prime = C3- (1/2)*(C4+Cz) ;
+C4_prime = C4- (1/2)*(C3+Cz) ;
+Cz_prime = Cz- (1/2)*(C3+C4) ;
 
 
 data_filtered.trial{1}=[C3_prime;C4_prime;Cz_prime]; % Returns the ft_structure

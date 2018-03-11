@@ -31,10 +31,12 @@ elseif strcmp(type,'LAP')
     tempData=LAP(data);
 elseif strcmp(type,'ICA')
     tempData=ICA(data);
+elseif strcmp(type,'CSP')
+    tempData=CSP(data);
 end
 
 mySpatialFilteredData=tempData; % Assign tempData to the output
-
+assignin('base', 'mySpatialFilteredData', mySpatialFilteredData);
 
 
 
@@ -61,8 +63,12 @@ ax2=subplot(3,1,2)
 plot(time,channels(2,:))
 xlabel('time [s]')
 title(myTitleC4)
+
+if (strcmp(type,'CSP')==0)
+    
 ax3=subplot(3,1,3)
 plot(time,channels(3,:))
 xlabel('time [s]')
 title(myTitleCz)
+end
 end
