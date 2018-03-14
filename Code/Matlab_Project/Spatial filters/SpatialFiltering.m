@@ -1,4 +1,4 @@
-function [mySpatialFilteredData]=SpatialFiltering(data,type,band)
+function [mySpatialFilteredData]=SpatialFiltering(data,type,band,figure)
 
 %% Informations
 % This functions applies a spatial filter to the input data
@@ -43,7 +43,7 @@ assignin('base', 'mySpatialFilteredData', mySpatialFilteredData);
 
 
 %% Figures
-
+if (figure==1)
 titleC3='C3 x time spatially filtered for '
 myTitleC3=[titleC3 band];
 titleC4='C4 x time spatially filtered for '
@@ -70,5 +70,6 @@ ax3=subplot(3,1,3)
 plot(time,channels(3,:))
 xlabel('time [s]')
 title(myTitleCz)
+end
 end
 end

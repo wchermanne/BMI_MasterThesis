@@ -7,7 +7,9 @@ function [] = FeatureClassification(FeatureVector,choices)
 %
 % FeatureVector is the vector of features
 %
-
+% method is the method used for the classification. It can be
+% 'KNN','LDA','SVM'
+%
 % OUTPUTS
 %
 %% Code
@@ -25,15 +27,14 @@ function [] = FeatureClassification(FeatureVector,choices)
     nbOfFrames=length(fit);
     duration=choices.duration;
     timestep=(choices.WindowLength)/1000;
-    LeftMovement=0;
-    RightMovement=0;
     for i=1:length(fit)
         if(sequenceRight>=3)
             RightMovement=1;
             frame=i;
         elseif (sequenceLeft>=3)
+            fprintf('Left movement detected at %d th frame\n',i-3)
             LeftMovement=1;
-            frame=1;
+            frame=1
         end
         
         if (fit(i)==1)
@@ -42,7 +43,7 @@ function [] = FeatureClassification(FeatureVector,choices)
             sequenceLeft=0;
         elseif(fit(i)==2)
             nbOfLeft=nbOfLeft+1;
-            sequenceLeft=sequenceLeft+1;
+            sequenceLeft=sequenceLeft+1
             sequenceRight=0;
         elseif(fit(i)==3)
             nbOfRest=nbOfRest+1;
@@ -50,7 +51,6 @@ function [] = FeatureClassification(FeatureVector,choices)
             sequenceRight=0;
         end
     end
-
     
     
     
@@ -58,11 +58,5 @@ function [] = FeatureClassification(FeatureVector,choices)
     fprintf('%d frames correspond to left movement \n',nbOfLeft)
     fprintf('%d frames correspond to right movement \n',nbOfRight)
     fprintf('%d frames correspond to rest movement \n',nbOfRest)
-    
-    if(LeftMovement==1)
-            fprintf('Left movement detected at %d th frame\n',frame-3)
-    elseif(RightMovement==1)
-            fprintf('Right movement detected at %d th frame\n',frame-3)
-    end
 
 end

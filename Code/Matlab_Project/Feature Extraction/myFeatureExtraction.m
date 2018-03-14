@@ -1,4 +1,4 @@
-function [FeatureVector] = myFeatureExtraction(myData,method,WindowLengthRatio,WindowLengthOverlap,order,WaveletType,WaveletLevel)
+function [FeatureVector] = myFeatureExtraction(myData,method,WindowLengthRatio,WindowLengthOverlap,ARorder,WaveletType,WaveletLevel)
 %% Informations
 % This functions builds the feature vector of the data contained in the
 % structure myData
@@ -39,7 +39,6 @@ if strcmp(method,'PeakDetection')
     end
 elseif strcmp(method,'PowerBands')
     %% To complete
-    
 elseif strcmp(method,'Variance')
         for(i=1:nbOfChannels)
             for(j=1:nbOfFrames)
@@ -72,7 +71,7 @@ elseif strcmp(method,'TimeIntegration')
 elseif strcmp(method,'AR')
         for(i=1:nbOfChannels)
             for(j=1:nbOfFrames)
-            tempVector(j,:)=FvAutoRegressive(myWindowedData.channels(i).X(j,:),myWindowedData.time(j,:),myData.fsample,order);
+            tempVector(j,:)=FvAutoRegressive(myWindowedData.channels(i).X(j,:),myWindowedData.time(j,:),myData.fsample,ARorder);
             end
         myFeatureVectorMatrix=cat(2,myFeatureVectorMatrix,tempVector);
         end    
