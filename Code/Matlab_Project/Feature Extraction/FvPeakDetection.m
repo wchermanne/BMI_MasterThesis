@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = FvPeakDetection(X,t,type)
+function [outputArg1] = FvPeakDetection(X,t,type)
 
 %This function returns a feature vector using the peak detection method
 % Input : vector or matrix of samples X; time vector
@@ -42,6 +42,5 @@ for k = 1:1:size(X,1)
     end
 end
 outputArg1 = feature_out;
-outputArg2 = time_out;
 end
 

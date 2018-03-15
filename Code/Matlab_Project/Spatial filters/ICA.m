@@ -1,4 +1,4 @@
-function [data_filtered] = ICA(myData)
+function [data_filtered] = ICA(myData,figure)
 %% Informations
 % This functions applies a ICA filter to the data
 %
@@ -24,20 +24,20 @@ myData.trial{1}=comp.trial{1};
 data_filtered=myData;
 
 
-%% Independent Comp Analysis (Back to spatial filtering) with Matthieu's method
-    ICASig = fastica([myData.trial{1}(1,:); myData.trial{1}(3,:); myData.trial{1}(2,:)], 'numOfIC', 3);
-    S=ICASig;
-    comp=ICASig;
-    
-    figure
-    subplot(3,1,1)
-    plot(time,S(1,:))
-    title('S1 Channel with Fast ICA')
-    subplot(3,1,2)
-    plot(time,S(2,:))
-    title('S2 Channel with Fast ICA')
-     subplot(3,1,3)
-    plot(time,S(3,:))
-    title('S3 Channel with Fast ICA')
-
+% %% Independent Comp Analysis (Back to spatial filtering) with Matthieu's method
+%    % ICASig = fastica([myData.trial{1}(1,:); myData.trial{1}(3,:); myData.trial{1}(2,:)], 'numOfIC', 3);
+%    %S=ICASig;
+%     comp=ICASig;
+% if(figure==1)
+%     figure
+%     subplot(3,1,1)
+%     plot(time,S(1,:))
+%     title('S1 Channel with Fast ICA')
+%     subplot(3,1,2)
+%     plot(time,S(2,:))
+%     title('S2 Channel with Fast ICA')
+%      subplot(3,1,3)
+%     plot(time,S(3,:))
+%     title('S3 Channel with Fast ICA')
+% end
 end

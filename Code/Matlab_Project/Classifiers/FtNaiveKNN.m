@@ -18,8 +18,7 @@ else
 end
 classTag = trainedModel.ClassificationKNN.ClassNames;
 numOfClass = length(classTag);
-numOfPredictors = size(trainedModel.ClassificationKNN.PredictorNames,2);
-if(numOfPredictors == length(featureIn))
+if(numOfClass == length(featureIn))
 else
     error('The feature vector must have the same format as the trained model');
 end
@@ -27,8 +26,8 @@ end
 numOfNeighbors = trainedModel.ClassificationKNN.NumNeighbors;
 dist = trainedModel.ClassificationKNN.Distance;
 Y = trainedModel.ClassificationKNN.Y;
-X = table2array(trainedModel.ClassificationKNN.X);
-%outputArg1 = classTag(minIndx);
+X = [trainedModel.ClassificationKNN.X.column_1 trainedModel.ClassificationKNN.X.column_2];
+outputArg1 = classTag(minIndx);
 
 distVec = ones(size(X,1),1);
 switch dist
@@ -41,14 +40,14 @@ switch dist
             distVec(l) = (X(l,:) - featureIn.')*(X(l,:).' - featureIn);
         end
     otherwise
-        error('choose a valid distance')
 end
 
-[XSorted,Xindx] = sort(distVec,'ascend');
+[XSorted,Xindx] = sort(distVec,'ascent');
 classNN = Y(Xindx(1:numOfNeighbors));
 classNNunique = unique(classNN);
 [out,outIndx] = max(histc(classNN,classNNunique));
 outputArg1 = classNNunique(outIndx);
+
 end
 
 

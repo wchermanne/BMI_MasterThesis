@@ -1,4 +1,4 @@
-function [windowedSignal] = windowing_framing(Fs,t,X,winoverlap,winlen_ratio)
+function [windowedSignal] = windowing_framing(Fs,t,X,winlen_ratio,winoverlap)
 %This function Takes a matrix/vector and windows it using a Hamming window.
 % initialize the signal time segment index
 % winlen & winoverlap are expressed in milliseconds
@@ -57,11 +57,7 @@ for l = 1:1:size(X,2)
         % update the index
         indx = indx + hop;
     end
-<<<<<<< HEAD
-    windowedSignal.Channel(l).X = Xw_matrix.';
-=======
     windowedSignal.channels(l).X = Xw_matrix.';
->>>>>>> origin/master
     if(l==1)
         windowedSignal.time = t_matrix.';
     else
