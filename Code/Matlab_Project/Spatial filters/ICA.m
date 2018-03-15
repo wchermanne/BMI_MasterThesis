@@ -15,18 +15,20 @@ function [data_filtered] = ICA(myData,figure)
 channels=myData.trial{1};
 time=myData.time{1};
 
-cfg=[];
-cfg.method='runica';
-comp=ft_componentanalysis(cfg,myData);
-assignin('base', 'comp', comp);
+% cfg=[];
+% cfg.method='runica';
+% comp=ft_componentanalysis(cfg,myData);
+% assignin('base', 'comp', comp);
 
-myData.trial{1}=comp.trial{1};
+%% Independent Comp Analysis (Back to spatial filtering) with Matthieu's method
+
+ICASig = fastica([myData.trial{1}(1,:); myData.trial{1}(3,:); myData.trial{1}(2,:)], 'numOfIC', 3); %C3 Cz C4
+S=ICASig;
+myData.trial{1}=ICASig;
 data_filtered=myData;
 
 
-% %% Independent Comp Analysis (Back to spatial filtering) with Matthieu's method
-%    % ICASig = fastica([myData.trial{1}(1,:); myData.trial{1}(3,:); myData.trial{1}(2,:)], 'numOfIC', 3);
-%    %S=ICASig;
+% 
 %     comp=ICASig;
 % if(figure==1)
 %     figure
