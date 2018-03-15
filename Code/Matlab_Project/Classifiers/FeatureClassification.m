@@ -53,16 +53,20 @@ function [] = FeatureClassification(FeatureVector,choices)
 
     
     
-    
+    clc
     fprintf('There are %d frames in total \n',length(fit))
     fprintf('%d frames correspond to left movement \n',nbOfLeft)
     fprintf('%d frames correspond to right movement \n',nbOfRight)
     fprintf('%d frames correspond to rest movement \n',nbOfRest)
-    
+    myResult=' ';
     if(LeftMovement==1)
-            fprintf('Left movement detected at %d th frame\n',frame-3)
+            myResult='Left movement detected!';
+            fprintf('Left movement detected!\n')
+            
     elseif(RightMovement==1)
-            fprintf('Right movement detected at %d th frame\n',frame-3)
+            myResult='Right movement detected!';
+            fprintf('Right movement detected!\n')
+    else myResult='No movement detected!'; 
     end
-
+    assignin('base','myResult',myResult);
 end
