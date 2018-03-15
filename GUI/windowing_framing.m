@@ -57,9 +57,9 @@ for l = 1:1:size(X,2)
         % update the index
         indx = indx + hop;
     end
-    windowedSignal.Channel(l).X = Xw_matrix;
+    windowedSignal.Channel(l).X = Xw_matrix.';
     if(l==1)
-        windowedSignal.time = t_matrix;
+        windowedSignal.time = t_matrix.';
     else
     end
 end
