@@ -226,13 +226,13 @@ plot(t,C3)
 xlabel('time [s]')
 title('C3 x time at the input')
 ax2=subplot(3,1,2)
-plot(t,C4)
-xlabel('time [s]')
-title('C4 x time at the input')
-ax3=subplot(3,1,3)
 plot(t,Cz)
 xlabel('time [s]')
 title('Cz x time at the input')
+ax3=subplot(3,1,3)
+plot(t,C4)
+xlabel('time [s]')
+title('C4 x time at the input')
             
 
 

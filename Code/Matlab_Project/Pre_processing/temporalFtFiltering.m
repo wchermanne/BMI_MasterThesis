@@ -69,10 +69,10 @@ title(myTitleC3)
 ax2=subplot(3,1,2)
 plot(time,channels(2,:))
 xlabel('time [s]')
-title(myTitleC4)
+title(myTitleCz)
 ax3=subplot(3,1,3)
 plot(time,channels(3,:))
 xlabel('time [s]')
-title(myTitleCz)
+title(myTitleC4)
 end
 end

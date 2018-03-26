@@ -1,4 +1,4 @@
-function [myFtData]=createFtStruct()
+function [myFtData]=createFtStruct(rawData,config)
 
 %% Informations
 % This functions builds the FieldTripeStrucre
@@ -10,19 +10,19 @@ function [myFtData]=createFtStruct()
 % function eeg_generator and stored in parameters.mat and rawData.mat
 
 %% Code
-%% Load the files and data
-rawData =evalin('base','rawData');
-EEG_parameters =evalin('base','EEG_parameters');
 
 %% Create the FieldTrip structure
-fsample=EEG_parameters.fsample;
-t_end=EEG_parameters.duration;
+t_end=config.duration;
 
 myFtData=[];
-myFtData.fsample=fsample;
+myFtData.fsample=config.fsample;
 myFtData.trial={rawData};
-myFtData.label={'C3' 'C4' 'CZ'};
+if(config.NbOfElectrodes==3)
+    myFtData.label={'C3' 'CZ' 'C4'};
+elseif(config.NbOfElectrodes==11)
+    myFtData.label={'C3' 'CZ' 'C4' 'Fc5' 'Fc1' 'Fc2' 'Fc6' 'Cp5' 'Cp1' 'Cp2' 'Cp6'};
+end
 myFtData.sampleinfo=[1 length(rawData(1,:))];
-myFtData.time={EEG_parameters.time};
+myFtData.time={config.time};
 myFtData.cfg=[];
 end

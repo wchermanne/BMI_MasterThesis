@@ -35,7 +35,7 @@ if strcmp(method,'PeakDetection')
             tempVector(j,:)=FvPeakDetection(myWindowedData.channels(i).X(j,:),myWindowedData.time(j,:),'max');
             assignin('base', 'tempVector', tempVector);
         end
-        myFeatureVectorMatrix=cat(2,myFeatureVectorMatrix,tempVector); % To concatenate the feture vectors for the different channels
+        myFeatureVectorMatrix=cat(2,myFeatureVectorMatrix,tempVector) % To concatenate the feture vectors for the different channels
     end
 elseif strcmp(method,'PowerBands')
     for(i=1:nbOfChannels) % Loop for the channels
@@ -43,7 +43,7 @@ elseif strcmp(method,'PowerBands')
             tempVector(j,:)=FvPowerBands(myWindowedData.channels(i).X(j,:),myWindowedData.time(j,:));
             assignin('base', 'tempVector', tempVector);
         end
-        myFeatureVectorMatrix=cat(2,myFeatureVectorMatrix,tempVector); % To concatenate the feture vectors for the different channels
+        myFeatureVectorMatrix=cat(2,myFeatureVectorMatrix,tempVector) % To concatenate the feture vectors for the different channels
     end
 elseif strcmp(method,'Variance')
         for(i=1:nbOfChannels)
@@ -84,6 +84,5 @@ elseif strcmp(method,'AR')
 end
 
 FeatureVector=myFeatureVectorMatrix;
-assignin('base', 'FeatureVector', FeatureVector);
 
 end

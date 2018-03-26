@@ -44,15 +44,18 @@ assignin('base', 'mySpatialFilteredData', mySpatialFilteredData);
 
 %% Figures
 if (figure==1)
-titleC3='C3 x time spatially filtered for '
+titleC3='C3 x time spatially filtered for ';
 myTitleC3=[titleC3 band];
-titleC4='C4 x time spatially filtered for '
+titleC4='C4 x time spatially filtered for ';
 myTitleC4=[titleC4 band];
-titleCz='Cz x time spatially filtered for '
+titleCz='Cz x time spatially filtered for ';
 myTitleCz=[titleCz band];
 
+myFtData=evalin('base','myFtData');
 time=tempData.time{1};
 channels=tempData.trial{1};
+channels(:,1:myFtData.fsample)=zeros(size(channels,1),myFtData.fsample);
+channels(:,end-(myFtData.fsample)+1:end)=zeros(size(channels,1),myFtData.fsample);
 
 figure;
 ax1=subplot(3,1,1)
@@ -62,14 +65,14 @@ title(myTitleC3)
 ax2=subplot(3,1,2)
 plot(time,channels(2,:))
 xlabel('time [s]')
-title(myTitleC4)
+title(myTitleCz)
 
-if (strcmp(type,'CSP')==0)
+if (strcmp(type,'CSP')==0 && strcmp(type,'ICA')==0)
     
 ax3=subplot(3,1,3)
 plot(time,channels(3,:))
 xlabel('time [s]')
-title(myTitleCz)
+title(myTitleC4)
 end
 end
 end

@@ -12,11 +12,6 @@ load('CSPmatrix.mat');
 
 data_filtered=myData; % So that data_filtered is a structure
 
-% Reorganize as C3 Cz C4
-tempTrial=myData.trial{1}(2,:);
-myData.trial{1}(2,:)=myData.trial{1}(3,:);
-myData.trial{1}(3,:)=tempTrial;
-
 data=myData.trial{1};
 
 multData=W_Csp'*data;

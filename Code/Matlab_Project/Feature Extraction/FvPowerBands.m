@@ -6,5 +6,5 @@ function [features] = power_bands(data,time)
 %
 % In the param structure, the sample frequency is saved
 % 
-features= trapz(data.^2)
+features= trapz(data.^2);
 end
