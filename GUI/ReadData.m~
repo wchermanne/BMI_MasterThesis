@@ -45,6 +45,17 @@ data = data.*LSB;
 Length = length(learning_set);
 learning_set(1+Length:Length+L,1:n_channel) = data;
 learning_set(1+Length:Length+L,n_channel+1) = 1;
+Trecord = 4;
+numFiles = round(size(data,1)/(Fs*Trecord));
+
+for k = 1:1:numFiles
+    fid  = fopen(['Newdata/26_03_18_right' num2str(k) '.txt'],'w')
+    for line = 1:1:875
+    
+    fclose(fid)
+end
+
+
 
 number_data = size(data,1);
 t_vec = linspace(0,number_data/Fs,number_data);
@@ -54,7 +65,7 @@ Cz = data(2,:);
 C4 = data(3,:);
 time = t_vec;
 Rawdata = [C3; C4; Cz; time]
-save('')
+save('Rawdata.mat','Rawdata');
 % figure;
 % subplot(3,1,1)
 % plot(learning_set(:,1));

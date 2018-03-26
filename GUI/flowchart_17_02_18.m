@@ -15,6 +15,8 @@ for i = 4:1:4
     
     
     %% Frequency Filtering & suuband creation for
+    Fs = 250;
+    nyq_freq = Fs/2;
     %%% One might use bandpass filtering from 3Hz (larger than EOG and eye blink artifacts)
     %%% up to 30-40 Hz (lower than power line interference @50 Hz)
     filter_order = 96;
@@ -42,10 +44,13 @@ for i = 4:1:4
     
     %%% ALT FILTER : FIR Filter for gamma rhythm --> pay attention to the delay = N/2
     low_cutoff = 7; % 3 Hz
-    high_cutoff = 35; % 35Hz
-    b_fir = fir1(filter_order,[low_cutoff./nyq_freq,high_cutoff./nyq_freq]);% Hamming Window-based FIR filter design (from 0->1 with 1 correpons to nyquist frequency)
-    %figure
-    %freqz(b_fir,1,512);
+    high_cutoff = 19; % 35Hz
+    
+    [b_iir,a_iir]=cheby2(6,40,[low_cutoff./nyq_freq,high_cutoff./nyq_freq]); % Bandpass digital filter design (12th order, 60dB attenuation in the stopband)
+%[b_iir,a_iir] = zp2tf(z_iir,p_iir,k_iir);
+%iir_filt = tf(b_iir,a_iir,1/Fs);
+%pzmap(iir_filt);
+h = fvtool(b_iir,a_iir);
     
     % C3_filtered = filter(b_fir,1,C3);
     % C4_filtered = filter(b_fir,1,C4);
