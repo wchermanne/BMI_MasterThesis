@@ -9,18 +9,20 @@
 
 %% TRAINING PART %%%%%%% Now 3 class are required ! Rigth, Left & Rest
 
-side = 2;
+side = 1;
 if(side==1)
     text_side = 'Right';
 else
     text_side = 'Left';
 end
-
+p = 9;
 level = 5;
-feature_mat = ones(20,3);
-wavelet_feature_mat = ones(20,2*level+1);
-wavelet_feature_mat_rest = ones(20,2*level+1);
-feature_mat_rest = ones(20,3);
+feature_mat = ones(20,2*p+1);
+wavelet_feature_mat = ones(20,2*p+1);
+wavelet_feature_mat_rest = ones(20,2*p+1);
+feature_mat_rest = ones(20,2*p+1);
+featureMatRestTot = [];
+featureMatMoveTot = [];
 for i = 1:1:20
     %% Loading data
     load(['/Users/matthieu/GitHub/BMI_MasterThesis/GUI/Data_for_CSP/EEG_Signals_' text_side '_Trial_' num2str(i) '.mat']);
@@ -32,7 +34,7 @@ for i = 1:1:20
     
     %%% 1ST : FIR Filter for mu rhythm --> pay attention to the delay = N/2
     low_cutoff = 7; % 3 Hz
-    high_cutoff = 14; % 35Hz 14Hz
+    high_cutoff = 26; % 35Hz 14Hz
     b_fir_mu = fir1(filter_order,[low_cutoff./nyq_freq,high_cutoff./nyq_freq]);% Hamming Window-based FIR filter design (from 0->1 with 1 correpons to nyquist frequency)
     
     %%% 2ND : FIR Filter for beta rhythm --> pay attention to the delay = N/2
@@ -57,7 +59,7 @@ for i = 1:1:20
     S = (W_Csp.')*[C3_filtered; Cz_filtered; C4_filtered];
     %% Applying AAR LMS-based algorithm
     win = (hamming(Fs, 'periodic')).';
-    p = 9; % order of the AR model
+     % order of the AR model
     S1_win = S(1,filter_order/2+1:Fs+filter_order/2).*win;
     S2_win = S(2,filter_order/2+1:Fs+filter_order/2).*win;
     t = time(filter_order/2+1:Fs+filter_order/2);
@@ -98,7 +100,7 @@ for i = 1:1:20
         A = ARValue;
         Y = S(:,1+indx:p+1+indx);
         ekVec(:,indx) = ek;
-        if (time(indx) >= 6 && time(indx) <= 8)
+        if (time(indx) >= 2 && time(indx) <= 4)
             featureMatRest(indxRest,:) = [ARValue(1,:) ARValue(2,:) 3];
             indxRest = indxRest+1;
         end
@@ -108,6 +110,17 @@ for i = 1:1:20
             indxMov = indxMov+1;
         end
     end
+    featureMatMoveTot = [featureMatMoveTot; featureMatMov];
+    featureMatRestTot = [featureMatRestTot; featureMatRest];
+%     featureMatRestVar = var(featureMatRest);
+%     featureMatMoveVar = var(featureMatMov);
+%     VarTotMove = sum(featureMatMoveVar);
+%     VarTotRest = sum(featureMatRestVar);
+%     featureMatRestVar(end) = 3;
+%     featureMatMoveVar(end) = side;
+%     
+%     feature_mat_rest(i,:) = featureMatRestVar; %[log(featureMatRestVar(1:end-1)./VarTotRest) featureMatRestVar(end)] ;
+%     feature_mat(i,:) = featureMatMoveVar;%[log(featureMatMoveVar(1:end-1)./VarTotMove) featureMatMoveVar(end)];
     %     %% Feature extraction using BandPower (or variance and a windows of 3s )
     %     %First Windowing around the moment
     %     t_move = 10;
@@ -194,7 +207,7 @@ if(side==1)
 else
     text_side = 'Left';
 end
-load(['/Users/matthieu/GitHub/BMI_MasterThesis/GUI/Data_for_CSP/EEG_Signals_' text_side '_Trial_5.mat']);
+load(['/Users/matthieu/GitHub/BMI_MasterThesis/GUI/Data_for_CSP/EEG_Signals_' text_side '_Trial_9.mat']);
 
 %%% Temporal Filtering
 
@@ -246,6 +259,7 @@ Ak = ones(p,p,size(S,1));
 lambda = 1.5;%0.08;
 ekVec = ones(2,size(S,2)-1-p);
 tOcc = [];
+IndxOcc =[];
 %%% RAR-based algorithm
 for indx = 1:1:size(S,2)-1-p
     [ARValue, AkNew,ek]= FvRAR(Y,A,Fs,p,lambda,Ak);
@@ -253,9 +267,10 @@ for indx = 1:1:size(S,2)-1-p
     A = ARValue;
     Y = S(:,1+indx:p+1+indx);
     ekVec(:,indx) = ek;
-    if (time(indx) >= 2)
-        fit = trainedModel4.predictFcn([ARValue(1,:) ARValue(2,:)]);
+    if (time(indx) >= 1)
+        fit = trainedModel.predictFcn([ARValue(1,:) ARValue(2,:)]);
         if(fit ==side)
+            IndxOcc = [IndxOcc indx];
             tOcc = [tOcc time(indx)];
         end
     end

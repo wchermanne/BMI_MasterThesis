@@ -1,4 +1,4 @@
-function [C3,Cz,C4,time] = ReadData(file,number_class,Fs,n_channel)
+function [] = ReadData(file,number_class,Fs,n_channel)
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
 %% PARAMETERS
@@ -45,16 +45,28 @@ data = data.*LSB;
 Length = length(learning_set);
 learning_set(1+Length:Length+L,1:n_channel) = data;
 learning_set(1+Length:Length+L,n_channel+1) = 1;
-
-number_data = size(data,1);
-t_vec = linspace(0,number_data/Fs,number_data);
-data = data.';
-C3 = data(1,:);
-Cz = data(2,:);
-C4 = data(3,:);
-time = t_vec;
-Rawdata = [C3; C4; Cz; time]
-save('Rawdara.mat','Rawdata');
+Trecord = 4;
+numFiles = round(size(data,1)/(Fs*Trecord));
+secKept = 3.5*Fs;
+t_vec = linspace(0,secKept/Fs,secKept);
+for k = 1:1:numFiles
+    fid  = fopen(['Newdata2/26_03_18_right' num2str(k) '.txt'],'w');
+    for line = 1:1:secKept
+        y = data((9 + (k-1)*(Fs*Trecord) + line),:);
+        y = [y t_vec(line)];
+        fprintf(fid,'%f\t %f\t %f\t %f\n',y);
+    end 
+    fclose(fid);
+end
+% number_data = size(data,1);
+% t_vec = linspace(0,number_data/Fs,number_data);
+% data = data.';
+% C3 = data(1,:);
+% Cz = data(2,:);
+% C4 = data(3,:);
+% time = t_vec;
+% Rawdata = [C3; C4; Cz; time]
+% save('Rawdata.mat','Rawdata');
 % figure;
 % subplot(3,1,1)
 % plot(learning_set(:,1));

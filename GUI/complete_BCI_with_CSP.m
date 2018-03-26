@@ -9,7 +9,7 @@
 
 %% TRAINING PART %%%%%%% Now 3 class are required ! Rigth, Left & Rest
 
-side = 2;
+side = 1;
 if(side==1)
     text_side = 'Right';
 else
@@ -33,7 +33,8 @@ for i = 1:1:20
     %%% 1ST : FIR Filter for mu rhythm --> pay attention to the delay = N/2
     low_cutoff = 7; % 3 Hz
     high_cutoff = 14; % 35Hz 14Hz
-    b_fir_mu = fir1(filter_order,[low_cutoff./nyq_freq,high_cutoff./nyq_freq]);% Hamming Window-based FIR filter design (from 0->1 with 1 correpons to nyquist frequency)
+    b_fir_mu = fir1(filter_order,[low_cutoff./nyq_freq,high_cutoff./nyq_freq]);
+    b_iir_mu = butter(8,[low_cutoff./nyq_freq,high_cutoff./nyq_freq]);% Hamming Window-based FIR filter design (from 0->1 with 1 correpons to nyquist frequency)
     
     %%% 2ND : FIR Filter for beta rhythm --> pay attention to the delay = N/2
     low_cutoff = 15; % 3 Hz
@@ -138,8 +139,11 @@ Cz_filtered = filter(b_fir_mu,1,Cz);
 %%% CSP
 S = (W_Csp.')*[C3_filtered; Cz_filtered; C4_filtered];
 %%% Wavelet Transform
-
-
+figure; 
+subplot(2,1,1)
+plot(S(1,:));
+subplot(2,1,2)
+plot(S(2,:));
 % wname = 'sym1'; %% 'sym6' or 'db1'
 % level = 6;
 % 
