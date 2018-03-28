@@ -12,7 +12,7 @@ learning_set = [];
 % DATA EXTRACTION
 
 
-file = fopen(['RealData/' file] ,'r');
+file = fopen([file] ,'r');
 
 nextline = '';
 str='';
@@ -49,8 +49,10 @@ Trecord = 4;
 numFiles = round(size(data,1)/(Fs*Trecord));
 secKept = 3.5*Fs;
 t_vec = linspace(0,secKept/Fs,secKept);
+mydate=date;
+side='right'
 for k = 1:1:numFiles
-    fid  = fopen(['Newdata2/26_03_18_right' num2str(k) '.txt'],'w');
+    fid  = fopen([mydate '_' side num2str(k) '.txt'],'w');
     for line = 1:1:secKept
         y = data((9 + (k-1)*(Fs*Trecord) + line),:);
         y = [y t_vec(line)];
@@ -58,6 +60,5 @@ for k = 1:1:numFiles
     end 
     fclose(fid);
 end
-
 end
 
