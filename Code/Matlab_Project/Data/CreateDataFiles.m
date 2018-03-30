@@ -1,6 +1,4 @@
 function [] = CreateDataFiles(file,number_class,Fs,n_channel)
-%UNTITLED2 Summary of this function goes here
-%   Detailed explanation goes here
 %% PARAMETERS
 n_hex = 7;
 Gain = 24;
@@ -49,16 +47,17 @@ Trecord = 4;
 numFiles = round(size(data,1)/(Fs*Trecord));
 secKept = 3.5*Fs;
 t_vec = linspace(0,secKept/Fs,secKept);
+
+data = data.';
 mydate=date;
-side='right'
 for k = 1:1:numFiles
-    fid  = fopen([mydate '_' side num2str(k) '.txt'],'w');
-    for line = 1:1:secKept
-        y = data((9 + (k-1)*(Fs*Trecord) + line),:);
-        y = [y t_vec(line)];
-        fprintf(fid,'%f\t %f\t %f\t %f\n',y);
-    end 
-    fclose(fid);
+    indx = 9 + (k-1)*(Fs*Trecord);
+    C3 = data(1,indx+1:indx+secKept);
+    Cz = data(2,indx+1:indx+secKept);
+    C4 = data(3,indx+1:indx+secKept);
+    time = t_vec;
+    Rawdata = [C3; C4; Cz; time];
+    save([mydate '_right' num2str(k) '.mat'],'C3','Cz','C4', 'time');
 end
 end
 
