@@ -1,4 +1,4 @@
-function [R_normalized] = spatial_cov_computation_Real_Data(C3,C4,Cz)
+function [R_normalized] = spatial_cov_computation_Real_Data_7_channels(C3,C4,Cz,FC1,FC2,CP1,CP2)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes her
 % t_move = 10;
@@ -7,8 +7,8 @@ function [R_normalized] = spatial_cov_computation_Real_Data(C3,C4,Cz)
 % win = (hamming(wlen, 'periodic')).';
 C3_win = C3;
 C4_win = C4;
-Cz_win = Cz; 
-X = [C3_win; Cz_win; C4_win];
+Cz_win = Cz;
+X = [C3_win; Cz_win; C4_win; FC1; FC2; CP1; CP2];
 R = X*(X.');
 R_normalized = R./(trace(R));
 end

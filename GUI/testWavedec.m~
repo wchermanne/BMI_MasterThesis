@@ -1,0 +1,16 @@
+clear all;
+close all;
+S1 =  1:9;
+lS1 = length(S1)
+S2 = -(-9:-1);
+level = 1;
+dwtmode('sym')
+[LO_D,HI_D,LO_R,HI_R] = wfilters('db1')
+A = (conv([S2 S1 S2],LO_D))
+B = (conv([S2 S1 S2],HI_D)) % dyaddown
+A = dyaddown(A(10:end-9))
+B = dyaddown(B(lS:end-9))
+[C_1,L1] = wavedec(S1,level,LO_D,HI_D)
+
+C_1 - [A B]
+

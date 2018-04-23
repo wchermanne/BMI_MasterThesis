@@ -45,9 +45,9 @@ data = data.*LSB;
 Length = length(learning_set);
 learning_set(1+Length:Length+L,1:n_channel) = data;
 learning_set(1+Length:Length+L,n_channel+1) = 1;
-Trecord = 4;
+Trecord = 3;
 numFiles = round(size(data,1)/(Fs*Trecord));
-secKept = 3.5*Fs;
+secKept = 2*Fs;
 t_vec = linspace(0,secKept/Fs,secKept);
 % for k = 1:1:numFiles
 %     fid  = fopen(['Newdata2/26_03_18_right' num2str(k) '.txt'],'w');
@@ -76,13 +76,17 @@ t_vec = linspace(0,secKept/Fs,secKept);
 % plot(learning_set(:,3));
 data = data.';
 for k = 1:1:numFiles
-    indx = 9 + (k-1)*(Fs*Trecord);
+    indx = 50 + (k-1)*(Fs*Trecord);
     C3 = data(1,indx+1:indx+secKept);
     Cz = data(2,indx+1:indx+secKept);
     C4 = data(3,indx+1:indx+secKept);
+    FC1 = data(4,indx+1:indx+secKept);
+    FC2 = data(6,indx+1:indx+secKept);
+    CP2 = data(7,indx+1:indx+secKept);
+    CP1 = data(8,indx+1:indx+secKept);
     time = t_vec;
     Rawdata = [C3; C4; Cz; time];
-    save(['RealDataMat/26_03_18_Rest' num2str(k) '.mat'],'C3','Cz','C4', 'time');
+    save(['RealData7channels/test' num2str(k) '.mat'],'C3','Cz','C4', 'FC1', 'FC2', 'CP2', 'CP1', 'time');
 end
 end
 

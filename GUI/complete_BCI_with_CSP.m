@@ -122,10 +122,6 @@ close all
 %%% First trial of machine learning prediction
 
 
-
-
-
-
 %% TESTING PART %%%%%%%%%%%%%
 load('KNN.mat')
 load(['/Users/matthieu/GitHub/BMI_MasterThesis/GUI/Data_for_CSP/EEG_Signals_Right_Trial_18.mat']);
