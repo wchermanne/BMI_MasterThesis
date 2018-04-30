@@ -35,6 +35,6 @@ W = (P.')*V;
 %%%% Then we can select first and last vector. They have max variance
 %%%% for class 1 & 2 respectively
 W_Csp = [W(:,1) W(:,3)];
-S = (W_Csp.')*[C3_filtered; Cz_filtered; C4_filtered];
+%S = (W_Csp.')*[C3_filtered; Cz_filtered; C4_filtered];
 end
 
