@@ -1,4 +1,4 @@
-function [] = ReadData(file,number_class,Fs,n_channel)
+function [] = ReadData(file,number_class,Fs,n_channel,supindex)
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
 %% PARAMETERS
@@ -75,18 +75,20 @@ t_vec = linspace(0,secKept/Fs,secKept);
 % subplot(3,1,3)
 % plot(learning_set(:,3));
 data = data.';
+indexStr = 0;
 for k = 1:1:numFiles
+    indexStr = k + supindex;
     indx = 50 + (k-1)*(Fs*Trecord);
     C3 = data(1,indx+1:indx+secKept);
     Cz = data(2,indx+1:indx+secKept);
     C4 = data(3,indx+1:indx+secKept);
-    FC1 = data(4,indx+1:indx+secKept);
-    FC2 = data(6,indx+1:indx+secKept);
-    CP2 = data(7,indx+1:indx+secKept);
-    CP1 = data(8,indx+1:indx+secKept);
+    %FC1 = data(4,indx+1:indx+secKept);
+    %FC2 = data(6,indx+1:indx+secKept);
+    CP2 = data(4,indx+1:indx+secKept);
+    CP1 = data(5,indx+1:indx+secKept);
     time = t_vec;
     Rawdata = [C3; C4; Cz; time];
-    save(['RealData7channels/test' num2str(k) '.mat'],'C3','Cz','C4', 'FC1', 'FC2', 'CP2', 'CP1', 'time');
+    save(['2504Data/25_04_18_Rest' num2str(indexStr) '.mat'],'C3','Cz','C4','CP2', 'CP1', 'time');
 end
 end
 
